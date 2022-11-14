@@ -8,6 +8,7 @@ void offState() {
   turnOffPump();
   setWaterRelayToRemoveWater();
   turnOffDosingPump();
+  checkIfNeedToCycle();
 }
 
 String timeToString(const long t) {

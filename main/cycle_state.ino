@@ -1,21 +1,17 @@
 const unsigned long CYCLE_DURATION = 10000L;
 const unsigned long CYCLE_HALF_DURATION = CYCLE_DURATION / 2;
 
-unsigned long startOfCycleMillis = 0;
-
 bool isFirstCycleStart = true;
 
 void cycleState() {
   if (isFirstCycleStart) {
-    startOfCycleMillis = getSystemTime();
     resetTime();
     isFirstCycleStart = false;
   }
 
   turnOffDosingPump();
 
-  const unsigned long currentMillis = getSystemTime();
-  const unsigned long delta = currentMillis - startOfCycleMillis;
+  const unsigned long delta = getSystemTime();
 
   if (delta < CYCLE_HALF_DURATION) {
     drawCycleText("Pumping water in", (float)delta / (float)CYCLE_HALF_DURATION);
@@ -33,6 +29,7 @@ void cycleState() {
     closeValves();
     state = OFF;
     isFirstCycleStart = true;
+    setCycleStartTime();
   }
 }
 
@@ -58,3 +55,10 @@ void drawCycleText(const String text, const float ratio) {
   display.display();
 }
 
+void checkIfNeedToCycle() {
+  long timeLeft = NEXT_CYCLE_START_MILLIS - getSystemTime();
+
+  if (timeLeft < 0) {
+    state = CYCLE;
+  }
+}
